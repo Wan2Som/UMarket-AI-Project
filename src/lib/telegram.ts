@@ -24,5 +24,5 @@ export function telegramLink(handle: string): string {
 
 /** The opening message we copy to the buyer's clipboard before opening Telegram. */
 export function inquiryMessage(title: string): string {
-  return `Hi! I saw "${title}" on PasarUTP. Is it still available?`;
+  return `Hi! I saw "${title}" on UMarket. Is it still available?`;
 }
