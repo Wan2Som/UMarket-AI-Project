@@ -62,7 +62,7 @@ export function ImpactCounter({ soldListings, scope = "community" }: { soldListi
           {scope === "community" ? "So far, " : "Your sales have given "}
           <Figure value={t.itemsRehomed} className="text-xl text-fg" />{" "}
           {scope === "community" ? (t.itemsRehomed === 1 ? "item has found" : "items have found") : t.itemsRehomed === 1 ? "item" : "items"}{" "}
-          a second owner{scope === "you" ? "" : " through PasarUTP"}. That keeps about{" "}
+          a second owner{scope === "you" ? "" : " through UMarket"}. That keeps about{" "}
           <Figure value={t.kgMaterial} digits={1} className="text-xl text-accent" /> kg of material in use and avoids roughly{" "}
           <Figure value={t.kgCO2e} digits={1} className="text-xl text-cyan" /> kg CO₂e from making new ones, about the same
           as not driving <Figure value={t.kmNotDriven} className="text-fg" /> km.
