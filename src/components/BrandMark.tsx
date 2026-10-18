@@ -3,7 +3,7 @@ import Link from "next/link";
 /** Logo: a small swing-tag with a punched hole, echoing the price tags. */
 export function BrandMark() {
   return (
-    <Link href="/" className="group inline-flex items-center gap-2.5" aria-label="PasarUTP home">
+    <Link href="/" className="group inline-flex items-center gap-2.5" aria-label="UMarket home">
       <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
         <defs>
           <linearGradient id="brand-g" x1="0" y1="0" x2="1" y2="1">
@@ -24,7 +24,7 @@ export function BrandMark() {
         />
       </svg>
       <span className="font-display text-lg font-extrabold tracking-tight text-fg">
-        Pasar<span className="text-muted">UTP</span>
+        U<span className="text-muted">Market</span>
       </span>
     </Link>
   );
