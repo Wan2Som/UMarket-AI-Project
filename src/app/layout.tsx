@@ -20,10 +20,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: { default: "PasarUTP — campus circular market", template: "%s · PasarUTP" },
+  title: { default: "UMarket — campus circular market", template: "%s · UMarket" },
   description:
     "Buy and sell preloved goods, food pre-orders, tickets and services around Universiti Teknologi PETRONAS and Seri Iskandar, with live availability and AI-assisted listings.",
-  applicationName: "PasarUTP",
+  applicationName: "UMarket",
 };
 
 export const viewport: Viewport = {
