@@ -1,0 +1,89 @@
+rules_version = '2';
+
+// PasarUTP — Firestore security rules
+//
+// listings/{id}: anyone can read; only signed-in users can create, and only
+//                as themselves; only the original seller can edit, change the
+//                status (Available / Reserved / Sold) or delete.
+// users/{uid}:   each user can read and write only their own profile.
+//
+// Field checks mirror src/lib/firestore.ts and src/lib/imageService.ts.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isTelegramHandle(v) {
+      return v is string && v.matches('^[A-Za-z][A-Za-z0-9_]{4,31}$');
+    }
+
+    function listingFields() {
+      return ['title', 'description', 'category', 'tags', 'condition', 'price', 'priceUnit',
+              'originalPrice', 'imageUrl', 'location', 'expiresAt', 'ai', 'impact', 'status',
+              'sellerId', 'sellerName', 'sellerPhoto', 'sellerTelegram', 'createdAt',
+              'updatedAt', 'soldAt'];
+    }
+
+    function isValidListing(d) {
+      return d.keys().hasAll(listingFields())
+        && d.keys().hasOnly(listingFields())
+        && d.title is string && d.title.size() >= 3 && d.title.size() <= 80
+        && d.description is string && d.description.size() <= 1000
+        && d.category in ['PRELOVED', 'FOOD', 'TICKETS', 'SERVICES']
+        && d.status in ['available', 'reserved', 'sold']
+        && d.price is number && d.price >= 0 && d.price <= 100000
+        && (d.originalPrice == null || (d.originalPrice is number && d.originalPrice >= 0))
+        && d.priceUnit is string && d.priceUnit.size() <= 20
+        && d.tags is list && d.tags.size() <= 6
+        && (d.condition == null || d.condition in ['new', 'like_new', 'good', 'fair', 'parts'])
+        && d.location is string && d.location.size() <= 60
+        && (d.imageUrl == null || (d.imageUrl is string && d.imageUrl.size() <= 200000))
+        && (d.expiresAt == null || d.expiresAt is timestamp)
+        && (d.soldAt == null || d.soldAt is timestamp)
+        && (d.ai == null || d.ai is map)
+        && d.impact is map
+        && d.sellerName is string && d.sellerName.size() <= 100
+        && isTelegramHandle(d.sellerTelegram)
+        && d.updatedAt == request.time;
+    }
+
+    match /listings/{listingId} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && request.resource.data.sellerId == request.auth.uid
+        && request.resource.data.status == 'available'
+        && request.resource.data.createdAt == request.time
+        && isValidListing(request.resource.data);
+
+      // Only the original owner can edit or mark the item Sold.
+      // sellerId and createdAt can never change after creation.
+      allow update: if signedIn()
+        && resource.data.sellerId == request.auth.uid
+        && request.resource.data.sellerId == resource.data.sellerId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && isValidListing(request.resource.data);
+
+      allow delete: if signedIn() && resource.data.sellerId == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+
+      allow create, update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['displayName', 'photoURL', 'telegram', 'updatedAt'])
+        && (request.resource.data.telegram == null || isTelegramHandle(request.resource.data.telegram));
+
+      allow delete: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

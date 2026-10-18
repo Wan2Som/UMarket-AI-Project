@@ -1,0 +1,292 @@
+@import "tailwindcss";
+
+/* Dark mode follows the `dark` class that next-themes puts on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ───────────────────────── Theme tokens ─────────────────────────
+   Light values live on :root, dark values on .dark. Every component
+   reads the semantic tokens below, never raw hex, so both themes stay
+   in sync. */
+:root {
+  --bg: #f5f7fb;
+  --bg-2: #eef0fb;
+  --surface: rgb(255 255 255 / 0.72);
+  --surface-strong: #ffffff;
+  --line: rgb(15 23 42 / 0.09);
+  --line-strong: rgb(15 23 42 / 0.16);
+  --fg: #0f172a;
+  --muted: #5b6577;
+  --accent: #059669;
+  --accent-fg: #ffffff;
+  --cyan: #0891b2;
+  --ai: #7c3aed;
+  --reserved: #b45309;
+  --sold: #e11d48;
+
+  --mesh-1: rgb(16 185 129 / 0.16);
+  --mesh-2: rgb(6 182 212 / 0.14);
+  --mesh-3: rgb(139 92 246 / 0.14);
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.06), 0 12px 32px -16px rgb(15 23 42 / 0.22);
+  --shadow-float: 0 1px 2px rgb(15 23 42 / 0.08), 0 18px 40px -18px rgb(15 23 42 / 0.35);
+  --cursor-rgb: 5 150 105;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0f172a;
+  --bg-2: #1e1b4b;
+  --surface: rgb(15 23 42 / 0.55);
+  --surface-strong: #131c33;
+  --line: rgb(148 163 184 / 0.14);
+  --line-strong: rgb(148 163 184 / 0.26);
+  --fg: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #34d399;
+  --accent-fg: #042f22;
+  --cyan: #22d3ee;
+  --ai: #a78bfa;
+  --reserved: #fbbf24;
+  --sold: #fb7185;
+
+  --mesh-1: rgb(16 185 129 / 0.20);
+  --mesh-2: rgb(34 211 238 / 0.13);
+  --mesh-3: rgb(139 92 246 / 0.22);
+
+  --shadow-card: 0 0 0 1px rgb(148 163 184 / 0.04), 0 24px 48px -28px rgb(0 0 0 / 0.7);
+  --shadow-float: 0 24px 56px -20px rgb(0 0 0 / 0.75);
+  --cursor-rgb: 52 211 153;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-cyan: var(--cyan);
+  --color-ai: var(--ai);
+  --color-reserved: var(--reserved);
+  --color-sold: var(--sold);
+
+  --font-display: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-float: var(--shadow-float);
+}
+
+/* ───────────────────────── Base ───────────────────────── */
+html {
+  background: var(--bg);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+::selection {
+  background: rgb(var(--cursor-rgb) / 0.3);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ───────────────────────── Surfaces ───────────────────────── */
+
+/* Frosted glass panel: blur(12px) with a semi-transparent border, per the design brief. */
+@utility glass {
+  background: var(--surface);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid var(--line);
+}
+
+/* Soft glowing mesh behind every page. Static on purpose: the page should be calm to read. */
+@utility mesh-bg {
+  background:
+    radial-gradient(42rem 32rem at 8% -6%, var(--mesh-1), transparent 70%),
+    radial-gradient(36rem 28rem at 96% 4%, var(--mesh-3), transparent 70%),
+    radial-gradient(40rem 30rem at 70% 105%, var(--mesh-2), transparent 70%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 140%);
+}
+
+/* Gradient hairline that appears on hover (cards, panels). */
+@utility gradient-ring {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, var(--accent), var(--cyan) 45%, var(--ai));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 250ms ease;
+    pointer-events: none;
+  }
+  &:hover::after,
+  &:focus-within::after {
+    opacity: 1;
+  }
+}
+
+/* ───────────────────────── The pasar price tag ─────────────────────────
+   A swing-tag with a punched hole: the one bold element of the design. */
+@utility price-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+  padding: 0.35rem 0.85rem 0.35rem 1.45rem;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  clip-path: polygon(0.7rem 0, 100% 0, 100% 100%, 0.7rem 100%, 0 50%);
+  -webkit-mask: radial-gradient(circle at 0.8rem 50%, transparent 0.17rem, #000 0.2rem);
+  mask: radial-gradient(circle at 0.8rem 50%, transparent 0.17rem, #000 0.2rem);
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.25));
+}
+
+/* Rubber chop stamp for sold-out items. */
+@utility stamp {
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: var(--sold);
+  border: 3px solid currentColor;
+  border-radius: 0.6rem;
+  padding: 0.2rem 0.9rem 0.3rem;
+  line-height: 1;
+  text-align: center;
+  transform: rotate(-11deg);
+  background: rgb(0 0 0 / 0.08);
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.04);
+  -webkit-mask: repeating-radial-gradient(circle at 30% 40%, #000 0 2px, rgb(0 0 0 / 0.82) 2px 3px);
+  mask: repeating-radial-gradient(circle at 30% 40%, #000 0 2px, rgb(0 0 0 / 0.82) 2px 3px);
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ───────────────────────── Motion ───────────────────────── */
+@keyframes stamp-in {
+  0% { transform: rotate(-11deg) scale(1.9); opacity: 0; }
+  60% { transform: rotate(-11deg) scale(0.94); opacity: 1; }
+  100% { transform: rotate(-11deg) scale(1); opacity: 1; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes live-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@utility animate-stamp-in {
+  animation: stamp-in 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+@utility animate-rise {
+  animation: rise 650ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@utility animate-live-ping {
+  animation: live-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@utility skeleton {
+  background: linear-gradient(90deg, var(--line) 25%, var(--line-strong) 50%, var(--line) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* ───────────────────────── Custom cursor ───────────────────────── */
+.cursor-glow,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 60;
+  will-change: transform;
+}
+
+.cursor-glow {
+  width: 420px;
+  height: 420px;
+  margin: -210px 0 0 -210px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(var(--cursor-rgb) / 0.13), transparent 62%);
+  z-index: 1;
+  transition: opacity 300ms ease;
+}
+
+.cursor-ring {
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border-radius: 9999px;
+  border: 1.5px solid rgb(var(--cursor-rgb) / 0.55);
+  transition: width 220ms ease, height 220ms ease, margin 220ms ease,
+    background-color 220ms ease, border-color 220ms ease, opacity 300ms ease;
+}
+
+.cursor-ring.is-hover {
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  background: rgb(var(--cursor-rgb) / 0.1);
+  border-color: rgb(var(--cursor-rgb) / 0.8);
+}
+
+.cursor-ring.is-down {
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+}
+
+.cursor-hidden {
+  opacity: 0;
+}
+
+/* Native <dialog> backdrop for Modal */
+dialog::backdrop {
+  background: rgb(2 6 23 / 0.55);
+  backdrop-filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
