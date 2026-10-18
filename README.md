@@ -1,6 +1,6 @@
 # UMarket — campus circular market
 
-An AI-assisted marketplace for Universiti Teknologi PETRONAS (UTP) and Seri Iskandar. It replaces the crowded
+An AI-assisted marketplace for Universiti Teknologi PETRONAS (UTP). It replaces the crowded
 pasarUTP Telegram channel's text-only listings with a live feed where availability is always current, listings are
 categorised and priced with help from an on-device AI assistant, and every sale adds to a campus-wide estimate of
 waste and emissions avoided.
@@ -204,7 +204,7 @@ From this folder:
 ```bash
 git init
 git add .
-git commit -m "PasarUTP: AI-assisted campus marketplace"
+git commit -m "UMarket: AI-assisted campus marketplace"
 git branch -M main
 git remote add origin https://github.com/Wan2Som/AI-Project.git
 git push -u origin main
