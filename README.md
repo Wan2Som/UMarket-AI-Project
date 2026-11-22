@@ -1,6 +1,6 @@
 # UMarket — campus circular market
 
-An AI-assisted marketplace for Universiti Teknologi PETRONAS (UTP). It replaces the crowded
+An AI-assisted marketplace for Universiti Teknologi PETRONAS (UTP) and Seri Iskandar Town. It replaces the crowded
 pasarUTP Telegram channel's text-only listings with a live feed where availability is always current, listings are
 categorised and priced with help from an on-device AI assistant, and every sale adds to a campus-wide estimate of
 waste and emissions avoided.
